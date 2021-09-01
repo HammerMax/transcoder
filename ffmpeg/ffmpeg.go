@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -18,13 +19,40 @@ import (
 	"github.com/HammerMax/transcoder/utils"
 )
 
+func parseFileOption(flag string, f *transcoder.FileOption) []string {
+	if f == nil {
+		return nil
+	}
+
+	var s []string
+	if f.Option != nil {
+		s = f.Option.GetStrArguments()
+	}
+
+	if flag != "" {
+		s = append(s, flag)
+	}
+
+	s = append(s, f.Filename)
+	return s
+}
+
+func ParseInputFile(f *transcoder.FileOption) []string {
+	return parseFileOption("-i", f)
+}
+
+func ParseOutputFile(f *transcoder.FileOption) []string {
+	return parseFileOption("", f)
+}
+
 // Transcoder ...
 type Transcoder struct {
 	config           *Config
-	input            string
-	output           []string
+	input            []*transcoder.FileOption
+	output           []*transcoder.FileOption
 	options          [][]string
 	metadata         transcoder.Metadata
+
 	inputPipeReader  *io.ReadCloser
 	outputPipeReader *io.ReadCloser
 	inputPipeWriter  *io.WriteCloser
@@ -32,8 +60,27 @@ type Transcoder struct {
 	commandContext   *context.Context
 }
 
+type Logger interface {
+	Infof(format string, a ...interface{})
+}
+
+type defaultLogger struct {
+}
+
+func (dl defaultLogger) Infof(format string, a ...interface{}) {
+	log.Printf(format, a...)
+}
+
 // New ...
 func New(cfg *Config) transcoder.Transcoder {
+	if cfg == nil {
+		panic("ffmpeg config required")
+	}
+
+	if cfg.Logger == nil {
+		cfg.Logger = defaultLogger{}
+	}
+
 	return &Transcoder{config: cfg}
 }
 
@@ -58,30 +105,18 @@ func (t *Transcoder) Start(opts transcoder.Options) (<-chan transcoder.Progress,
 	}
 
 	// Append input file and standard options
-	args := append([]string{"-i", t.input}, opts.GetStrArguments()...)
-	outputLength := len(t.output)
-	optionsLength := len(t.options)
-
-	if outputLength == 1 && optionsLength == 0 {
-		// Just append the 1 output file we've got
-		args = append(args, t.output[0])
-	} else {
-		for index, out := range t.output {
-			// Get executable flags
-			// If we are at the last output file but still have several options, append them all at once
-			if index == outputLength-1 && outputLength < optionsLength {
-				for i := index; i < len(t.options); i++ {
-					args = append(args, t.options[i]...)
-				}
-				// Otherwise just append the current options
-			} else {
-				args = append(args, t.options[index]...)
-			}
-
-			// Append output flag
-			args = append(args, out)
-		}
+	var args []string
+	for _, input := range t.input {
+		args = append(args, ParseInputFile(input)...)
 	}
+	if opts != nil {
+		args = append(args, opts.GetStrArguments()...)
+	}
+	for _, output := range t.output {
+		args = append(args, ParseOutputFile(output)...)
+	}
+
+	t.config.Logger.Infof("ffmpeg args:%v", args)
 
 	// Initialize command
 	// If a context object was supplied to this Transcoder before
@@ -129,14 +164,14 @@ func (t *Transcoder) Start(opts transcoder.Options) (<-chan transcoder.Progress,
 }
 
 // Input ...
-func (t *Transcoder) Input(arg string) transcoder.Transcoder {
-	t.input = arg
+func (t *Transcoder) Input(f *transcoder.FileOption) transcoder.Transcoder {
+	t.input = append(t.input, f)
 	return t
 }
 
 // Output ...
-func (t *Transcoder) Output(arg string) transcoder.Transcoder {
-	t.output = append(t.output, arg)
+func (t *Transcoder) Output(f *transcoder.FileOption) transcoder.Transcoder {
+	t.output = append(t.output, f)
 	return t
 }
 
@@ -184,7 +219,7 @@ func (t *Transcoder) validate() error {
 		return errors.New("ffmpeg binary path not found")
 	}
 
-	if t.input == "" {
+	if len(t.input) == 0 {
 		return errors.New("missing input option")
 	}
 
@@ -201,7 +236,7 @@ func (t *Transcoder) validate() error {
 	}
 
 	for index, output := range t.output {
-		if output == "" {
+		if output.Filename == "" {
 			return fmt.Errorf("output at index %d is an empty string", index)
 		}
 	}
@@ -218,10 +253,10 @@ func (t *Transcoder) GetMetadata() (transcoder.Metadata, error) {
 		input := t.input
 
 		if t.inputPipeReader != nil {
-			input = "pipe:"
+			//input = "pipe:"
 		}
 
-		args := []string{"-i", input, "-print_format", "json", "-show_format", "-show_streams", "-show_error"}
+		args := []string{"-i", input[0].Filename, "-print_format", "json", "-show_format", "-show_streams", "-show_error"}
 
 		cmd := exec.Command(t.config.FfprobeBinPath, args...)
 		cmd.Stdout = &outb
