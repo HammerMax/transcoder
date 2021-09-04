@@ -7,7 +7,7 @@ import (
 
 type FileOption struct {
 	Filename string
-	Option Options
+	Option   Options
 }
 
 // Transcoder ...

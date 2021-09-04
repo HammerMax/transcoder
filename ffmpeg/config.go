@@ -6,5 +6,5 @@ type Config struct {
 	FfprobeBinPath  string
 	ProgressEnabled bool
 	Verbose         bool
-	Logger Logger
+	Logger          Logger
 }

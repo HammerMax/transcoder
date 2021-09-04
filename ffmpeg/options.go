@@ -31,8 +31,8 @@ type Options struct {
 	VideoProfile          *string           `flag:"-profile:v"`
 	Target                *string           `flag:"-target"`
 	Duration              *string           `flag:"-t"`
-	Qscale                *uint32           `flag:"-qscale"`
-	Crf                   *uint32           `flag:"-crf"`
+	Qscale                *int              `flag:"-qscale"`
+	Crf                   *int              `flag:"-crf"`
 	Strict                *int              `flag:"-strict"`
 	MuxDelay              *string           `flag:"-muxdelay"`
 	SeekTime              *string           `flag:"-ss"`
@@ -65,7 +65,7 @@ type Options struct {
 	PixFmt                *string           `flag:"-pix_fmt"`
 	WhiteListProtocols    []string          `flag:"-protocol_whitelist"`
 	Overwrite             *bool             `flag:"-y"`
-	FilterComplex                *string           `flag:"-filter_complex"`
+	FilterComplex         *string           `flag:"-filter_complex"`
 	ExtraArgs             map[string]interface{}
 }
 
@@ -118,183 +118,274 @@ func (opts *Options) GetStrArguments() []string {
 	return values
 }
 
-func (opts *Options) SetAspect() {
+func (opts *Options) SetAspect(aspect string) *Options {
+	opts.Aspect = &aspect
+	return opts
+}
+
+func (opts *Options) SetResolution(resolution string) *Options {
+	opts.Resolution = &resolution
+	return opts
+}
+
+func (opts *Options) SetVideoBitRate(videoBitRate string) *Options {
+	opts.VideoBitRate = &videoBitRate
+	return opts
+}
+
+func (opts *Options) SetVideoBitRateTolerance(videoBitRateTolerance int) *Options {
+	opts.VideoBitRateTolerance = &videoBitRateTolerance
+	return opts
+}
+func (opts *Options) SetVideoMaxBitRate(videoMaxBitRate int) *Options {
+	opts.VideoMaxBitRate = &videoMaxBitRate
+	return opts
+}
+func (opts *Options) SetVideoMinBitrate(videoMinBitrate int) *Options {
+	opts.VideoMinBitrate = &videoMinBitrate
+	return opts
 
 }
-func (opts *Options) SetResolution() {
+func (opts *Options) SetVideoCodec(videoCodec string) *Options {
+	opts.VideoCodec = &videoCodec
+	return opts
 
 }
-func (opts *Options) SetVideoBitRate() {
+func (opts *Options) SetVframes(vframes int) *Options {
+	opts.Vframes = &vframes
+	return opts
 
 }
-func (opts *Options) SetVideoBitRateTolerance() {
+func (opts *Options) SetFrameRate(frameRate int) *Options {
+	opts.FrameRate = &frameRate
+	return opts
 
 }
-func (opts *Options) SetVideoMaxBitRate() {
+func (opts *Options) SetAudioRate(audioRate int) *Options {
+	opts.AudioRate = &audioRate
+	return opts
 
 }
-func (opts *Options) SetVideoMinBitrate() {
+func (opts *Options) SetKeyframeInterval(keyframeInterval int) *Options {
+	opts.KeyframeInterval = &keyframeInterval
+	return opts
 
 }
-func (opts *Options) SetVideoCodec() {
+func (opts *Options) SetAudioCodec(audioCodec string) *Options {
+	opts.AudioCodec = &audioCodec
+	return opts
 
 }
-func (opts *Options) SetVframes() {
+func (opts *Options) SetAudioBitrate(audioBitrate string) *Options {
+	opts.AudioBitrate = &audioBitrate
+	return opts
 
 }
-func (opts *Options) SetFrameRate() {
+func (opts *Options) SetAudioChannels(audioChannels int) *Options {
+	opts.AudioChannels = &audioChannels
+	return opts
+}
+func (opts *Options) SetAudioVariableBitrate(audioVariableBitrate bool) *Options {
+	opts.AudioVariableBitrate = &audioVariableBitrate
+	return opts
 
 }
-func (opts *Options) SetAudioRate() {
+func (opts *Options) SetBufferSize(bufferSize int) *Options {
+	opts.BufferSize = &bufferSize
+	return opts
 
 }
-func (opts *Options) SetKeyframeInterval() {
+func (opts *Options) SetThreadset(threadset bool) *Options {
+	opts.Threadset = &threadset
+	return opts
 
 }
-func (opts *Options) SetAudioCodec() {
+func (opts *Options) SetThreads(Threads int) *Options {
+	opts.Threads = &Threads
+	return opts
 
 }
-func (opts *Options) SetAudioBitrate() {
+func (opts *Options) SetPreset(Preset string) *Options {
+	opts.Preset = &Preset
+	return opts
 
 }
-func (opts *Options) SetAudioChannels() {
+func (opts *Options) SetTune(Tune string) *Options {
+	opts.Tune = &Tune
+	return opts
 
 }
-func (opts *Options) SetAudioVariableBitrate() {
+func (opts *Options) SetAudioProfile(audioProfile string) *Options {
+	opts.AudioProfile = &audioProfile
+	return opts
 
 }
-func (opts *Options) SetBufferSize() {
+func (opts *Options) SetVideoProfile(videoProfile string) *Options {
+	opts.VideoProfile = &videoProfile
+	return opts
 
 }
-func (opts *Options) SetThreadset() {
+func (opts *Options) SetTarget(target string) *Options {
+	opts.Target = &target
+	return opts
 
 }
-func (opts *Options) SetThreads() {
+func (opts *Options) SetDuration(duration string) *Options {
+	opts.Duration = &duration
+	return opts
 
 }
-func (opts *Options) SetPreset() {
+func (opts *Options) SetQscale(qscale int) *Options {
+	opts.Qscale = &qscale
+	return opts
 
 }
-func (opts *Options) SetTune() {
+func (opts *Options) SetCrf(crf int) *Options {
+	opts.Crf = &crf
+	return opts
 
 }
-func (opts *Options) SetAudioProfile() {
+func (opts *Options) SetStrict(strict int) *Options {
+	opts.Strict = &strict
+	return opts
 
 }
-func (opts *Options) SetVideoProfile() {
-
-}
-func (opts *Options) SetTarget() {
-
-}
-func (opts *Options) SetDuration() {
-
-}
-func (opts *Options) SetQscale() {
-
-}
-func (opts *Options) SetCrf() {
-
-}
-func (opts *Options) SetStrict() {
-
-}
-func (opts *Options) SetMuxDelay() {
+func (opts *Options) SetMuxDelay(muxDelay string) *Options {
+	opts.MuxDelay = &muxDelay
+	return opts
 
 }
 func (opts *Options) SetSeekTime(ss string) *Options {
 	opts.SeekTime = &ss
 	return opts
 }
-func (opts *Options) SetSeekUsingTimestamp() {
+func (opts *Options) SetSeekUsingTimestamp(seekUsingTimestamp bool) *Options {
+	opts.SeekUsingTimestamp = &seekUsingTimestamp
+	return opts
+}
+func (opts *Options) SetMovFlags(movFlags string) *Options {
+	opts.MovFlags = &movFlags
+	return opts
 
 }
-func (opts *Options) SetMovFlags() {
+func (opts *Options) SetHideBanner(hideBanner bool) *Options {
+	opts.HideBanner = &hideBanner
+	return opts
 
 }
-func (opts *Options) SetHideBanner() {
+func (opts *Options) SetOutputFormat(outputFormat string) *Options {
+	opts.OutputFormat = &outputFormat
+	return opts
 
 }
-func (opts *Options) SetOutputFormat() {
+func (opts *Options) SetCopyTs(copyTs bool) *Options {
+	opts.CopyTs = &copyTs
+	return opts
 
 }
-func (opts *Options) SetCopyTs() {
-
-}
-func (opts *Options) SetNativeFramerateInput() {
+func (opts *Options) SetNativeFramerateInput(nativeFramerateInput bool) *Options {
+	opts.NativeFramerateInput = &nativeFramerateInput
+	return opts
 
 }
 func (opts *Options) SetInputInitialOffset(itsOffset string) *Options {
 	opts.InputInitialOffset = &itsOffset
 	return opts
 }
-func (opts *Options) SetRtmpLive() {
+func (opts *Options) SetRtmpLive(rtmpLive string) *Options {
+	opts.RtmpLive = &rtmpLive
+	return opts
+}
+func (opts *Options) SetHlsPlaylistType(hlsPlaylistType string) *Options {
+	opts.HlsPlaylistType = &hlsPlaylistType
+	return opts
+}
+func (opts *Options) SetHlsListSize(hlsListSize int) *Options {
+	opts.HlsListSize = &hlsListSize
+	return opts
+}
+func (opts *Options) SetHlsSegmentDuration(hlsSegmentDuration int) *Options {
+	opts.HlsSegmentDuration = &hlsSegmentDuration
+	return opts
+}
+func (opts *Options) SetHlsMasterPlaylistName(hlsMasterPlaylistName string) *Options {
+	opts.HlsMasterPlaylistName = &hlsMasterPlaylistName
+	return opts
+}
+func (opts *Options) SetHlsSegmentFilename(hlsSegmentFilename string) *Options {
+	opts.HlsSegmentFilename = &hlsSegmentFilename
+	return opts
+}
+func (opts *Options) SetHTTPMethod(hTTPMethod string) *Options {
+	opts.HTTPMethod = &hTTPMethod
+	return opts
+}
+func (opts *Options) SetHTTPKeepAlive(hTTPKeepAlive bool) *Options {
+	opts.HTTPKeepAlive = &hTTPKeepAlive
+	return opts
+}
+func (opts *Options) SetHwaccel(hwaccel string) *Options {
+	opts.Hwaccel = &hwaccel
+	return opts
+}
+func (opts *Options) SetStreamIds(streamIds map[string]string) *Options {
+	opts.StreamIds = streamIds
+	return opts
+}
+func (opts *Options) SetVideoFilter(videoFilter string) *Options {
+	opts.VideoFilter = &videoFilter
+	return opts
+}
+func (opts *Options) SetAudioFilter(audioFilter string) *Options {
+	opts.AudioFilter = &audioFilter
+	return opts
+}
+func (opts *Options) SetSkipVideo(skipVideo bool) *Options {
+	opts.SkipVideo = &skipVideo
+	return opts
+}
+func (opts *Options) SetSkipAudio(skipAudio bool) *Options {
+	opts.SkipAudio = &skipAudio
+	return opts
+}
+func (opts *Options) SetCompressionLevel(compressionLevel int) *Options {
+	opts.CompressionLevel = &compressionLevel
+	return opts
+}
+func (opts *Options) SetMapMetadata(mapMetadata string) *Options {
+	opts.MapMetadata = &mapMetadata
+	return opts
+}
+func (opts *Options) SetMetadata(metadata map[string]string) *Options {
+	opts.Metadata = metadata
+	return opts
+}
+func (opts *Options) SetEncryptionKey(encryptionKey string) *Options {
+	opts.EncryptionKey = &encryptionKey
+	return opts
+}
+func (opts *Options) SetBframe(bframe int) *Options {
+	opts.Bframe = &bframe
+	return opts
+}
+func (opts *Options) SetPixFmt(pixFmt string) *Options {
+	opts.PixFmt = &pixFmt
+	return opts
 
 }
-func (opts *Options) SetHlsPlaylistType() {
+func (opts *Options) SetWhiteListProtocols(whiteListProtocols []string) *Options {
+	opts.WhiteListProtocols = whiteListProtocols
+	return opts
 
 }
-func (opts *Options) SetHlsListSize() {
+func (opts *Options) SetOverwrite(overwrite bool) *Options {
+	opts.Overwrite = &overwrite
+	return opts
 
 }
-func (opts *Options) SetHlsSegmentDuration() {
-
-}
-func (opts *Options) SetHlsMasterPlaylistName() {
-
-}
-func (opts *Options) SetHlsSegmentFilename() {
-
-}
-func (opts *Options) SetHTTPMethod() {
-
-}
-func (opts *Options) SetHTTPKeepAlive() {
-
-}
-func (opts *Options) SetHwaccel() {
-
-}
-func (opts *Options) SetStreamIds() {
-
-}
-func (opts *Options) SetVideoFilter() {
-
-}
-func (opts *Options) SetAudioFilter() {
-
-}
-func (opts *Options) SetSkipVideo() {
-
-}
-func (opts *Options) SetSkipAudio() {
-
-}
-func (opts *Options) SetCompressionLevel() {
-
-}
-func (opts *Options) SetMapMetadata() {
-
-}
-func (opts *Options) SetMetadata() {
-
-}
-func (opts *Options) SetEncryptionKey() {
-
-}
-func (opts *Options) SetBframe() {
-
-}
-func (opts *Options) SetPixFmt() {
-
-}
-func (opts *Options) SetWhiteListProtocols() {
-
-}
-func (opts *Options) SetOverwrite() {
-
-}
-func (opts *Options) SetExtraArgs() {
+func (opts *Options) SetExtraArgs(extra map[string]interface{}) *Options {
+	opts.ExtraArgs = extra
+	return opts
 
 }
 

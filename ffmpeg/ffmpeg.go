@@ -47,11 +47,11 @@ func ParseOutputFile(f *transcoder.FileOption) []string {
 
 // Transcoder ...
 type Transcoder struct {
-	config           *Config
-	input            []*transcoder.FileOption
-	output           []*transcoder.FileOption
-	options          [][]string
-	metadata         transcoder.Metadata
+	config   *Config
+	input    []*transcoder.FileOption
+	output   []*transcoder.FileOption
+	options  [][]string
+	metadata transcoder.Metadata
 
 	inputPipeReader  *io.ReadCloser
 	outputPipeReader *io.ReadCloser
