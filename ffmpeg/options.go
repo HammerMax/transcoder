@@ -66,6 +66,7 @@ type Options struct {
 	WhiteListProtocols    []string          `flag:"-protocol_whitelist"`
 	Overwrite             *bool             `flag:"-y"`
 	FilterComplex         *string           `flag:"-filter_complex"`
+	Map         *string           `flag:"-map"`
 	ExtraArgs             map[string]interface{}
 }
 
@@ -391,5 +392,10 @@ func (opts *Options) SetExtraArgs(extra map[string]interface{}) *Options {
 
 func (opts *Options) SetFilterComplex(filterComplex string) *Options {
 	opts.FilterComplex = &filterComplex
+	return opts
+}
+
+func (opts *Options) SetMap(strMap string) *Options {
+	opts.Map = &strMap
 	return opts
 }
