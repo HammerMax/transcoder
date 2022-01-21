@@ -153,6 +153,7 @@ func (t *Transcoder) Start(opts transcoder.Options) (<-chan transcoder.Progress,
 		}()
 
 		go func() {
+			defer close(out)
 			err = cmd.Wait()
 		}()
 	} else {
